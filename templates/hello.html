@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.js"></script>
+    <title>Tìm kiếm ảnh</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <h1 style="text-align: center;">
+                Tìm kiếm quần áo
+            </h1>
+        </div>
+        <div class="row">
+            <div class="col-md-3" style="border: 1px solid black;height:500px">
+                <h2>
+                    Chọn ảnh
+                </h2>
+                <form id="FileForm" name="file" enctype="multipart/form-data">
+                    <input type="file" name="image" id="image" style="margin-bottom:10px;">
+                    <button type="button" class="btn btn-primary" id="submit" style="margin-bottom:10px;">Tìm kiếm</button>
+                </form>
+                <img id="origin" />
+            </div>
+            <div class="col-md-9" id="result" 
+                style="border: 1px solid black; display: flex;height:500px;align-items: center;"
+            >
+            </div>
+        </div>
+    </div>
+    <script>
+        $("#submit").click(function(){
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#origin')
+                    .attr('src', e.target.result)
+                    .width(200)
+                    .height(200);
+            };
+            reader.readAsDataURL($('#image').prop("files")[0]);
+            var form_data = new FormData();
+            form_data.append("image",$('#image').prop("files")[0]);
+            axios.post("http://127.0.0.1:5000/upload-image",form_data)
+            .then(res=>{
+                console.log(res.data)
+                $("#result").html(`
+                    <img src="${res.data[0]}" width="200px" height="200px" />
+                    <img src="${res.data[1]}" width="200px" height="200px" />
+                    <img src="${res.data[2]}" width="200px" height="200px" />
+                    <img src="${res.data[3]}" width="200px" height="200px" />
+                `)
+            })
+        });
+    </script>
+</body>
+
+</html>
